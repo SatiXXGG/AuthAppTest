@@ -1,4 +1,4 @@
-import UserModel from '../models/User.js'
+import UserModel from '../../models/production/User.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
