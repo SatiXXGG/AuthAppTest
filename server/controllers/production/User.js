@@ -34,7 +34,7 @@ export default class User {
       httpOnly: true,
       maxAge: 60 * 60 * 1000,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: 'None'
     })
 
     return res.status(200).json(result)
