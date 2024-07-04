@@ -12,24 +12,19 @@ app.use(express.json());
 app.use(cookieParser());
 
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "https://satixx-auth.vercel.app/",
-    credentials: true,
-  },
-});
 
 app.use(
   cors({
     credentials: true,
     origin: "https://satixx-auth.vercel.app/",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],	
   })
 );
 
 const chatDb = createClient({
   url: "libsql://chat-satixxgg.turso.io",
   authToken:
-    "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MTkwMTU5ODAsImlkIjoiMDMyZjNmNjctYjcyNC00OWQ4LWJmYWItN2RmYzBhOTI2ZDcxIn0.mLcTkTVSL1y03VjWF2JaRn16LiUU1m3JvZmSsbSUM9SSoSjH1D9xRcvUJdmntrBpPfUVFKiwoQQezX_EkVDCBg",
+    process.env.AUTH_TOKEN,
 });
 
 chatDb.execute({
