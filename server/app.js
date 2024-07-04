@@ -102,6 +102,6 @@ io.on("connection", async (socket) => {
 
 // protected routes
 
-server.listen(process.env.HOST || 3000, () => {
+server.listen(process.env.PORT || 3000, () => {
   console.log("listening on *:3000");
 });
