@@ -12,15 +12,14 @@ export default function useCounter({
   const [value, setValue] = useState(startValue);
 
   useEffect(() => {
-    if (inputRef.current) {
+    const inputElement = inputRef.current;
+    if (inputElement) {
       const handleInputChange = () => {
-        setValue(Number(inputRef.current.value.length));
+        setValue(Number(inputRef.current?.value.length));
       };
-
-      inputRef.current.addEventListener("input", handleInputChange);
-
+      inputElement.addEventListener("input", handleInputChange);
       return () => {
-        inputRef.current?.removeEventListener("input", handleInputChange);
+        inputElement.removeEventListener("input", handleInputChange);
       };
     }
   }, [inputRef]);
