@@ -15,7 +15,7 @@ const server = createServer(app);
 app.use(
   cors({
     credentials: true,
-    origin: "https://satixx-auth.vercel.app/",
+    origin: "https://satixx-auth.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],	
   })
 );
