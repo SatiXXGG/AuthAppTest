@@ -12,6 +12,8 @@ export default function useUser() {
         credentials: "include",
       }).then((res) => res.json());
 
+      console.log(data);
+
       if (!data.success) {
         return (location.href = "/login");
       }

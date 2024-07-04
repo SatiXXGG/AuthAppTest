@@ -62,7 +62,7 @@ export default class User {
       req.session = { user: result.data.id }
       next()
     } else {
-      res.send({ error: 'Not allowed', success: false, data: {} })
+      res.status(401).send({ error: 'Not allowed', success: false, data: {} })
     }
   }
 
