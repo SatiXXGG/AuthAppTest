@@ -4,6 +4,7 @@ import Button from "../Components/Button";
 import useUser from "../CustomHooks/useUser";
 import { FormEvent, useState } from "react";
 import NavBar from "../Components/NavBar";
+import { API_HOST } from "../consts/hosts";
 
 function App() {
   const { data, patch } = useUser();
@@ -20,6 +21,21 @@ function App() {
 
   const handleUsernameChange = (newValue: string) => {
     setValues({ ...values, username: newValue });
+  };
+
+  const handleClick = () => {
+    //sends a fetch to logout
+
+    fetch(`${API_HOST}/logout`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.success) {
+          location.href = "/login";
+        }
+      });
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -88,6 +104,11 @@ function App() {
             {message}
           </p>
         </form>
+        <Button
+          title="Sign out"
+          className="mt-4 outline-red-600 bg-red-500 bg-opacity-20 px-4 py-2"
+          onClick={handleClick}
+        ></Button>
       </div>
     </>
   );
