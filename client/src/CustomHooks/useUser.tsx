@@ -13,8 +13,22 @@ export default function useUser() {
       }).then((res) => res.json());
 
       if (!data.success) {
-        return (location.href = "/login");
+        const refreshToken: fetchResult = await fetch(`${API_HOST}/user/token`, {
+          method: "POST",
+          credentials: "include",
+        }).then((res) => res.json());
+
+        if (!refreshToken.success) {
+          return (location.href = "/login");
+        }
+
+        const data2: fetchResult = await fetch(`${API_HOST}/user`, {
+          method: "GET",
+          credentials: "include",
+        }).then((res) => res.json());
+        setData(data2.data);
       }
+
       setData(data.data);
     };
 

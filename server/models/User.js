@@ -1,13 +1,14 @@
 import { createClient } from "@libsql/client";
-import { ValidateData, validatePartial } from "../../schemas/User.js";
+import { ValidateData, validatePartial } from "../schemas/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { configDotenv } from "dotenv";
+import dotenv from "dotenv";
 import { Resend } from "resend";
 
-configDotenv();
+dotenv.config("../.env")
 
 const resend = new Resend(process.env.RESEND_KEY);
+
 
 const chatDb = createClient({
   url: "libsql://chat-satixxgg.turso.io",
@@ -15,9 +16,15 @@ const chatDb = createClient({
     process.env.AUTH_TOKEN
 });
 
+
+
 async function generateTables () {
   await chatDb.execute(
     "CREATE TABLE IF NOT EXISTS users (username VARCHAR(20) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, id VARCHAR(100) UNIQUE NOT NULL, description VARCHAR(100), created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, original_user VARCHAR(20))"
+  );
+
+  await chatDb.execute(
+    "CREATE TABLE IF NOT EXISTS TOKENS (id VARCHAR(100) UNIQUE NOT NULL, token VARCHAR(255) UNIQUE NOT NULL)"
   );
 
   await chatDb.execute(
@@ -30,15 +37,20 @@ async function generateTables () {
 
   await chatDb.execute(
     "CREATE TABLE IF NOT EXISTS images (id VARCHAR(100) PRIMARY KEY NOT NULL, image BLOB)")
+
+  await chatDb.execute(
+    "CREATE TABLE IF NOT EXISTS tokens (id VARCHAR(100) PRIMARY KEY NOT NULL, token VARCHAR(100) NOT NULL)")
 }
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+await generateTables()
+
+
 export default class UserModel {
   static async register({ user, password, email, host_url }) {
-    await generateTables()
     const validated = ValidateData({ username: user, password });
 
     if (validated.error) {
@@ -120,6 +132,7 @@ export default class UserModel {
   }
 
   static async login(data) {
+
     const { user, password } = data;
 
     try {
@@ -196,7 +209,6 @@ export default class UserModel {
   }
 
   static async verifyEmail({code}) {
-    console.log(code)
 
     try {
       const result = await chatDb.execute({
@@ -285,4 +297,5 @@ export default class UserModel {
         success: false, message: "Invalid data?"}
     }
   }
+
 }

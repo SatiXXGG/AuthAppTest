@@ -36,10 +36,11 @@ export default function createApp({UserController: User, AppOrigin}) {
   app.post("/logout", User.logout);
   app.post("/verify-email", User.verifyEmail);
   app.post("/verify-url/:id/:code", User.verifyByURL);
+  app.post('/user/token', User.updateToken);
+
   app.use(User.checkAuth);
   app.get("/user", User.getUserData);
   app.patch("/user", User.patch);
-  app.post("user/message");
 
   // protected routes
 
