@@ -108,4 +108,38 @@ export default class User {
 
     return res.status(200).json(result)
   }
+
+   static async updateToken(req, res) {
+    try {
+      const { refresh_token } = req.cookies;
+
+      if (!refresh_token) {
+        return res.status(401).json({success: false, message: "No refresh token"})
+      }
+
+      const result = jwt.verify(refresh_token, process.env.JWT_SECRET_WORD);
+      const userData = await UserModel.getUserData(result.id);
+
+      if (userData.success) {
+        const newToken = jwt.sign({ //new access-token
+          id: userData.data.id,
+          username: userData.data.username}, process.env.JWT_SECRET_WORD, {
+            expiresIn: "30s",
+        })
+
+                
+        res.cookie("access_token", newToken, {
+          httpOnly: true,
+          maxAge: 60 * 60 * 1000,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        })
+
+        res.status(200).json({token: newToken, success: true})
+      }
+    } catch (e) {
+      console.log(e)
+      res.status(500).json({success: false, message: "Error updating token"})
+    }
+  }
 }
