@@ -159,7 +159,62 @@ export default class User {
     }
   }
 
-  static async createApp(req, res) {
-    
+   static async createApp(req, res) {
+    const { user } = req.session;
+    const { title, description } = req.body;
+    const result = await UserModel.createApp({ id: user, title, description });
+
+    if (result.success) {
+      return res.status(200).json(result);
+    }
+
+    res.status(500).json({ error: "Error creating app", message: result.message });
+  }
+
+  static async getApps(req, res) {
+    const { user } = req.session;
+    const result = await UserModel.getApps({ id: user });
+
+    if (result.success) {
+      return res.status(200).json(result);
+    }
+
+    res.status(500).json({ error: "Error getting apps", message: result.message });
+  }
+
+  static async getApp(req, res) {
+    const { user } = req.session;
+    const { id } = req.params;
+    const result = await UserModel.getApp({ id, user });
+
+    if (result.success) {
+      return res.send({success: true, data: result.data})
+    }
+
+    res.status(500).send({ error: "Error getting app", message: result.message });
+  }
+
+  static async getTickets(req, res) {
+    const { user } = req.session;
+    const { id } = req.params;
+    const result = await UserModel.getTickets({ id });
+
+    if (result.success) {
+      return res.send({success: true, data: result.data})
+    }
+
+    res.status(500).send({ error: "Error getting tickets", message: result.message });
+  }
+
+  static async submitTicket(req, res) {
+    const { id } = req.params;
+    const { content } = req.body;
+    const result = await UserModel.submitTicket({ id, content });
+
+    if (result.success) {
+      return res.send({success: true, message: "ticket submitted"})
+    }
+
+    res.status(500).send({ error: "Error submitting ticket", message: result.message });
   }
 }
