@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
 
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -10,57 +11,7 @@
   color: white;
 
   background-color: #000000;
-  opacity: 1;
-  background-image: linear-gradient(
-      30deg,
-      #050505 12%,
-      transparent 12.5%,
-      transparent 87%,
-      #050505 87.5%,
-      #050505
-    ),
-    linear-gradient(
-      150deg,
-      #050505 12%,
-      transparent 12.5%,
-      transparent 87%,
-      #050505 87.5%,
-      #050505
-    ),
-    linear-gradient(
-      30deg,
-      #050505 12%,
-      transparent 12.5%,
-      transparent 87%,
-      #050505 87.5%,
-      #050505
-    ),
-    linear-gradient(
-      150deg,
-      #050505 12%,
-      transparent 12.5%,
-      transparent 87%,
-      #050505 87.5%,
-      #050505
-    ),
-    linear-gradient(
-      60deg,
-      #05050577 25%,
-      transparent 25.5%,
-      transparent 75%,
-      #05050577 75%,
-      #05050577
-    ),
-    linear-gradient(
-      60deg,
-      #05050577 25%,
-      transparent 25.5%,
-      transparent 75%,
-      #05050577 75%,
-      #05050577
-    );
-  background-size: 20px 35px;
-  background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0, 10px 18px;
+  overflow-x: hidden;
 }
 
 .scroll-deco::-webkit-scrollbar {

@@ -3,6 +3,7 @@ import TextBox from "../Components/TextBox";
 import Button from "../Components/Button";
 import Logo from "../Components/Logo";
 import { API_HOST } from "../consts/hosts";
+import { fetchResult } from "../Types/UserData";
 
 function Login() {
   const [text, setText] = useState<string>("");
@@ -28,7 +29,7 @@ function Login() {
       return;
     }
 
-    const registerResult = await fetch(`${API_HOST}/login`, {
+    const registerResult: fetchResult = await fetch(`${API_HOST}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -46,7 +47,7 @@ function Login() {
       return (location.href = "/verify-email");
     }
 
-    updateText(registerResult.message);
+    updateText(registerResult.message ?? "");
   };
 
   return (

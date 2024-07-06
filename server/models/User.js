@@ -4,21 +4,18 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Resend } from "resend";
+import { ValidateAppData } from "../schemas/App.js";
 
-dotenv.config("../.env")
+dotenv.config("../.env");
 
 const resend = new Resend(process.env.RESEND_KEY);
 
-
 const chatDb = createClient({
   url: "libsql://chat-satixxgg.turso.io",
-  authToken:
-    process.env.AUTH_TOKEN
+  authToken: process.env.AUTH_TOKEN,
 });
 
-
-
-async function generateTables () {
+async function generateTables() {
   await chatDb.execute(
     "CREATE TABLE IF NOT EXISTS users (username VARCHAR(20) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, id VARCHAR(100) UNIQUE NOT NULL, description VARCHAR(100), created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, original_user VARCHAR(20))"
   );
@@ -36,18 +33,23 @@ async function generateTables () {
   );
 
   await chatDb.execute(
-    "CREATE TABLE IF NOT EXISTS images (id VARCHAR(100) PRIMARY KEY NOT NULL, image BLOB)")
+    "CREATE TABLE IF NOT EXISTS tokens (id VARCHAR(100) PRIMARY KEY NOT NULL, token VARCHAR(100) NOT NULL)"
+  );
 
   await chatDb.execute(
-    "CREATE TABLE IF NOT EXISTS tokens (id VARCHAR(100) PRIMARY KEY NOT NULL, token VARCHAR(100) NOT NULL)")
+    "CREATE TABLE IF NOT EXISTS apps (id VARCHAR(100) PRIMARY KEY UNIQUE NOT NULL, owner VARCHAR(100) NOT NULL, title VARCHAR(20) NOT NULL, description VARCHAR(100) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP )"
+  );
+
+  await chatDb.execute(
+    "CREATE TABLE IF NOT EXISTS tickets (id VARCHAR(100) NOT NULL, unique_id VARCHAR(100) PRIMARY KEY UNIQUE NOT NULL, content VARCHAR(20) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP )"
+  );
 }
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-await generateTables()
-
+generateTables();
 
 export default class UserModel {
   static async register({ user, password, email, host_url }) {
@@ -70,7 +72,7 @@ export default class UserModel {
           password: hashedPassword,
           id,
           description: "Hello world!",
-          original_user: user
+          original_user: user,
         },
       });
 
@@ -101,17 +103,16 @@ export default class UserModel {
       });
 
       //sends the verify code..
-      console.log(host_url)
-      const generatedUrl = `${host_url}/verify/${id}/${code}`
-
+      console.log(host_url);
+      const generatedUrl = `${host_url}/verify/${id}/${code}`;
 
       resend.emails.send({
         from: "onboarding@resend.dev",
-        to: email, 
+        to: email,
         subject: "Verify your email",
         text: `Your verification code is ${code} \n
         or enter this link ${generatedUrl} \n`,
-      })
+      });
 
       return {
         message: "User created",
@@ -132,7 +133,6 @@ export default class UserModel {
   }
 
   static async login(data) {
-
     const { user, password } = data;
 
     try {
@@ -170,12 +170,11 @@ export default class UserModel {
     }
   }
 
-  static async checkAuth(cookies) {
-    const { access_token: token } = cookies;
+  static async checkAuth({ access_token: token }) {
     if (!token) {
       return {
         success: false,
-        message: "Not authorized",
+        message: "Invalid token",
       };
     }
 
@@ -193,23 +192,20 @@ export default class UserModel {
   static async getUserData(userId) {
     try {
       const data = await chatDb.execute({
-        sql: "SELECT username, description, users.id, image, created_at, original_user FROM users LEFT JOIN images ON users.id = images.id WHERE users.id = :id",
+        sql: "SELECT username, description, users.id, created_at, original_user FROM users WHERE users.id = :id",
         args: {
           id: userId,
         },
       });
 
-   
-
       return { success: true, data: data.rows[0] };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return { success: false, message: "Invalid credentials" };
     }
   }
 
-  static async verifyEmail({code}) {
-
+  static async verifyEmail({ code }) {
     try {
       const result = await chatDb.execute({
         sql: "SELECT id, code FROM codes WHERE code = :code",
@@ -220,7 +216,7 @@ export default class UserModel {
 
       const { id, code: dbCode } = result.rows[0];
 
-      console.log(code, dbCode)
+      console.log(code, dbCode);
 
       if (code === dbCode) {
         await chatDb.execute({
@@ -230,7 +226,7 @@ export default class UserModel {
           },
         });
 
-        //clears the code 
+        //clears the code
 
         await chatDb.execute({
           sql: "DELETE FROM codes WHERE id = :id",
@@ -243,59 +239,181 @@ export default class UserModel {
       return {
         success: true,
         message: "Email verified",
-      }
-
-
+      };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Invalid code",
-      }
+      };
     }
   }
 
-  static async patch({data, id}) {
+  static async patch({ data, id }) {
     try {
-      const validation = validatePartial(data)
+      const validation = validatePartial(data);
       if (validation.error) {
         return {
           success: false,
-          message: validation.error.message
-        }
+          message: validation.error.message,
+        };
       }
 
-      const validatedData = validation.data
-      
+      const validatedData = validation.data;
+
       const oldResult = await chatDb.execute({
         sql: "SELECT username, description FROM users WHERE id = :id",
         args: {
-          id
-        }
-      })
+          id,
+        },
+      });
 
-      const oldData = oldResult.rows[0]
+      const oldData = oldResult.rows[0];
 
-      const {username, description} = { ...oldData, ...validatedData}
-      
+      const { username, description } = { ...oldData, ...validatedData };
+
       await chatDb.execute({
         sql: "UPDATE users SET username = :username, description = :description WHERE id = :id",
         args: {
           username,
           description,
-          id
-        }
-      })
+          id,
+        },
+      });
 
       return {
         success: true,
-        message: "Data updated"
-      }
-
+        message: "Data updated",
+      };
     } catch {
       return {
-        success: false, message: "Invalid data?"}
+        success: false,
+        message: "Invalid data?",
+      };
     }
   }
 
+  static async createApp({ title, description, id }) {
+    const validation = ValidateAppData({ title, description });
+    if (validation.error) {
+      console.log(validation);
+      return {
+        success: false,
+        message: validation.error.message,
+      };
+    }
+
+    const { title: validatedTitle, description: validatedDescription } =
+      validation.data;
+
+    try {
+      await chatDb.execute({
+        sql: "INSERT INTO apps (id, owner, title, description) VALUES (:id, :owner, :title, :description)",
+        args: {
+          title: validatedTitle,
+          description: validatedDescription,
+          owner: id,
+          id: crypto.randomUUID(),
+        },
+      });
+
+      return {
+        success: true,
+        message: "App created",
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        success: false,
+        message: "Database error",
+      };
+    }
+  }
+
+  static async getApps({ id }) {
+    try {
+      const result = await chatDb.execute({
+        sql: "SELECT id, title, description, created_at FROM apps WHERE owner = :id",
+        args: {
+          id,
+        },
+      });
+      return {
+        success: true,
+        data: result.rows,
+      };
+    } catch (e) {
+      console.log(e)
+      return {
+        success: false,
+        message: "Error getting apps",
+      };
+    }
+  }
+
+  static async getApp({id, user: useId}) {
+    try {
+      const result = await chatDb.execute({
+        sql: "SELECT id, title, description, created_at FROM apps WHERE id = :id AND owner = :owner",
+        args: {
+          id,
+          owner: useId
+        },
+      });
+      return {
+        success: true,
+        data: result.rows[0],
+      };
+    } catch (e) {
+      console.log(e)
+      return {
+        success: false,
+        message: "Error getting app",
+      }
+    }
+  }
+
+  static async getTickets({ id }) {
+    try {
+      const result = await chatDb.execute({
+        sql: "SELECT id, content, created_at FROM tickets WHERE id = :id",
+        args: {
+          id
+        },
+      });
+      return {
+        success: true,
+        data: result.rows,
+      };
+    } catch (e) {
+      console.log(e)
+      return {
+        success: false,
+        message: "Error getting app comments",
+      }
+    }
+  }
+
+  static async submitTicket({ id, content }) {
+    try {
+      await chatDb.execute({
+        sql: "INSERT INTO tickets (id, content, unique_id) VALUES (:id, :content, :unique_id)",
+        args: {
+          id,
+          content,
+          unique_id: crypto.randomUUID(),
+        },
+      });
+      return {
+        success: true,
+        message: "Ticket submitted",
+      };
+    } catch (e) {
+      console.log(e)
+      return {
+        success: false,
+        message: "Error submitting ticket",
+      }
+    }
+  }
 }

@@ -21,20 +21,36 @@ export default class User {
       return res.status(500).json({ error: 'BD ERROR', message: result.message })
     }
 
-    const token = await jwt.sign({
+    const token = await jwt.sign(
+      {
+        id: result.data.id,
+        username: result.data.username,
+      },
+      process.env.JWT_SECRET_WORD,
+      {
+        expiresIn: ACCESS_TOKEN_EXPIRATION_STRING,
+      }
+    );
+    
+    const refresh_token = await jwt.sign({
       id: result.data.id,
-      username: result.data.username,
-      password: result.data.password
+      username: result.data.username
     }, process.env.JWT_SECRET_WORD, {
-      expiresIn: '1h'
+      expiresIn: REFRESH_TOKEN_EXPIRATION_STRING,
     })
 
-
-    res.cookie('access_token', token, {
+    res.cookie("access_token", token, {
       httpOnly: true,
-      maxAge: 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'None'
+      maxAge: ACCESS_TOKEN_EXPIRATION,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      maxAge: REFRESH_TOKEN_EXPIRATION,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
     })
 
     return res.status(200).json(result)
@@ -62,7 +78,7 @@ export default class User {
       req.session = { user: result.data.id }
       next()
     } else {
-      res.status(401).send({ error: 'Not allowed', success: false, data: {} })
+      res.status(401).send({ message: 'Not allowed', success: false, data: {} })
     }
   }
 
@@ -141,5 +157,9 @@ export default class User {
       console.log(e)
       res.status(500).json({success: false, message: "Error updating token"})
     }
+  }
+
+  static async createApp(req, res) {
+    
   }
 }

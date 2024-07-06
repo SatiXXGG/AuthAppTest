@@ -12,4 +12,30 @@ export interface userData {
 export interface fetchResult {
   success: boolean;
   data: userData;
+  message?: string;
+}
+
+export interface appData {
+  title: string;
+  description: string;
+  created_at: string;
+  id: string;
+}
+
+export interface fetchAppResult {
+  success: boolean;
+  data: appData[];
+  message?: string;
+}
+
+export interface fetchSingleAppResult {
+  success: boolean;
+  data: appData;
+  message?: string;
+}
+
+export interface ticket {
+  content: string;
+  created_at: string;
+  id: string;
 }

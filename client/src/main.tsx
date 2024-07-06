@@ -8,6 +8,9 @@ import Home from "./Routes/Home";
 import Settings from "./Routes/Settings";
 import Verify from "./Routes/VerifyEmail";
 import VerifyUrl from "./Routes/verifyUrl";
+import CreateApp from "./Routes/CreateApp";
+import AppView from "./Routes/AppView";
+import AnswerTicket from "./Routes/AnswerTicket";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,18 @@ const router = createBrowserRouter([
   {
     path: "/verify/:id/:code",
     element: <VerifyUrl />,
+  },
+  {
+    path: "/create",
+    element: <CreateApp></CreateApp>,
+  },
+  {
+    path: "/apps/:id",
+    element: <AppView></AppView>,
+  },
+  {
+    path: "/app/:id/answer",
+    element: <AnswerTicket></AnswerTicket>,
   },
 ]);
 

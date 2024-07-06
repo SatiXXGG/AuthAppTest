@@ -32,7 +32,7 @@ function TextBox({
   });
 
   return (
-    <div className={"flex flex-col my-1 relative " + className}>
+    <div className={"flex flex-col relative " + className}>
       {counter && <Counter value={getValue()} max={limit} />}
       <input
         ref={item}
