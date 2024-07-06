@@ -1,6 +1,12 @@
 import UserModel from '../../models/User.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import {
+  ACCESS_TOKEN_EXPIRATION,
+  REFRESH_TOKEN_EXPIRATION,
+  REFRESH_TOKEN_EXPIRATION_STRING,
+  ACCESS_TOKEN_EXPIRATION_STRING,
+} from "../../settings/tokens.js";
 
 dotenv.config('.env')
 
