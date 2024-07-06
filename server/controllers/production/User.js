@@ -53,14 +53,14 @@ export default class User {
       httpOnly: true,
       maxAge: ACCESS_TOKEN_EXPIRATION,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
     });
 
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       maxAge: REFRESH_TOKEN_EXPIRATION,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
     });
 
     return res.status(200).json({ token, refresh_token, success: true });
