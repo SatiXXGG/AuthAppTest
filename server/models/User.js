@@ -343,7 +343,7 @@ export default class UserModel {
         data: result.rows,
       };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Error getting apps",
@@ -351,13 +351,13 @@ export default class UserModel {
     }
   }
 
-  static async getApp({id, user: useId}) {
+  static async getApp({ id, user: useId }) {
     try {
       const result = await chatDb.execute({
         sql: "SELECT id, title, description, created_at FROM apps WHERE id = :id AND owner = :owner",
         args: {
           id,
-          owner: useId
+          owner: useId,
         },
       });
       return {
@@ -365,11 +365,11 @@ export default class UserModel {
         data: result.rows[0],
       };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Error getting app",
-      }
+      };
     }
   }
 
@@ -378,7 +378,7 @@ export default class UserModel {
       const result = await chatDb.execute({
         sql: "SELECT id, content, created_at FROM tickets WHERE id = :id",
         args: {
-          id
+          id,
         },
       });
       return {
@@ -386,11 +386,11 @@ export default class UserModel {
         data: result.rows,
       };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Error getting app comments",
-      }
+      };
     }
   }
 
@@ -409,11 +409,33 @@ export default class UserModel {
         message: "Ticket submitted",
       };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Error submitting ticket",
-      }
+      };
+    }
+  }
+
+  static async deleteApp({ id, user }) {
+    try {
+      await chatDb.execute({
+        sql: "DELETE FROM apps WHERE id = :id AND owner = :owner",
+        args: {
+          id,
+          owner: user,
+        },
+      });
+      return {
+        success: true,
+        message: "App deleted",
+      };
+    } catch (e) {
+      console.log(e);
+      return {
+        success: false,
+        message: "Error deleting app",
+      };
     }
   }
 }

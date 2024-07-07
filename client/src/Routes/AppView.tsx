@@ -3,6 +3,8 @@ import Button from "../Components/Button";
 import NavBar from "../Components/NavBar";
 import useApp from "../CustomHooks/useApp";
 import useTickets from "../CustomHooks/useTickets";
+import toast from "react-hot-toast";
+
 export default function AppView() {
   const { app } = useApp();
   const { tickets } = useTickets();
@@ -19,8 +21,6 @@ export default function AppView() {
   return (
     <main className="relative">
       {alert()}
-      <p>{`${window.location.origin}/app/${app?.id}/answer`}</p>
-
       <NavBar></NavBar>
       <main className="items-center justify-center w-screen h-screen mx-auto flex flex-col">
         <article className="flex flex-row gap-x-4">
@@ -31,6 +31,12 @@ export default function AppView() {
             <p className="text-left opacity-35 mb-1">{app?.id}</p>
             <div className="flex flex-row my-2">
               <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    window.location.origin + `/app/${app?.id}/answer`
+                  );
+                  toast.success("Link copied to clipboard!");
+                }}
                 className="px-3 py-1 bg-blue-600 w-32 mr-2"
                 type="button"
                 title="Share"

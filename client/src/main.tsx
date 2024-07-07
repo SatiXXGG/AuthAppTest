@@ -11,6 +11,7 @@ import VerifyUrl from "./Routes/verifyUrl";
 import CreateApp from "./Routes/CreateApp";
 import AppView from "./Routes/AppView";
 import AnswerTicket from "./Routes/AnswerTicket";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,15 @@ export const UserContext = React.createContext({});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+    <Toaster
+      toastOptions={{
+        position: "top-right",
+        style: {
+          background: "#000",
+          color: "#fff",
+        },
+      }}
+    ></Toaster>
     <UserContext.Provider value={{}}>
       <RouterProvider router={router}></RouterProvider>
     </UserContext.Provider>

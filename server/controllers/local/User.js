@@ -217,6 +217,17 @@ export default class User {
     res.status(500).send({ error: "Error getting app", message: result.message });
   }
 
+  static async deleteApp(req, res) {
+    const { user } = req.session;
+    const { id } = req.params;
+    const result = await UserModel.deleteApp({ id, user });
+
+    if (result.success) {
+      return res.send({success: true, message: "app deleted"})
+    }
+    res.status(500).send({ success: false, message: result.message });
+  }
+
   static async getTickets(req, res) {
     const { user } = req.session;
     const { id } = req.params;

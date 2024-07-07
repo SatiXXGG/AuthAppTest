@@ -33,6 +33,7 @@ export default function createApp({ UserController: User, AppOrigin }) {
   app.get("/user", User.getUserData);
   app.patch("/user", User.patch);
   app.post("/user/app", User.createApp);
+  app.delete('/app', User.deleteApp)
   app.get("/user/app", User.getApps);
   app.get('/app/:id', User.getApp)
   app.get('/app/:id/tickets', User.getTickets)
