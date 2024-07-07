@@ -42,7 +42,7 @@ export function CreateApp() {
     <>
       <NavBar></NavBar>
       <main className=" items-center justify-center w-screen h-screen mx-auto flex flex-col">
-        <section className="w-[20vw] bg-neutral-950 px-5 py-3 rounded-xl">
+        <section className="w-[90vw] md:w-[20vw] bg-neutral-950 px-5 py-3 rounded-xl">
           <h1 className=" text-left text-2xl font-semibold my-3">Create App</h1>
           <TextBox
             className="w-full"

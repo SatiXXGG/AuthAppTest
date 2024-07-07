@@ -3,7 +3,7 @@ import TextBox from "./TextBox";
 
 export default function SearchBar() {
   return (
-    <div className="flex flex-row px-0 gap-x-3 my-5">
+    <div className="mx-auto flex flex-row px-0 gap-x-3 my-5">
       <TextBox
         className="h-full w-64 md:w-96 -z-10"
         placeholder="Search for a App"

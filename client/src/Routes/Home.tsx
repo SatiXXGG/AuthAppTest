@@ -9,9 +9,9 @@ function App() {
   return (
     <>
       <NavBar></NavBar>
-      <main className="items-center justify-center w-screen h-screen mx-auto flex flex-col">
+      <main className="mt-28 mx-auto flex flex-col">
         <SearchBar></SearchBar>
-        <section className="gap-3 grid grid-cols-1 md:grid-cols-3 px-3 md:w-[50rem]">
+        <section className="mx-auto gap-3 grid grid-cols-1 md:grid-cols-3 px-3 md:w-[50rem]">
           {apps?.map((app) => (
             <AppSection
               key={app.id}

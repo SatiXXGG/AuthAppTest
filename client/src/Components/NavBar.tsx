@@ -5,7 +5,7 @@ import NavLink from "./NavLink";
 export default function NavBar() {
   const { data } = useUser();
   return (
-    <nav className="bg-neutral-950 gap-y-3 w-full py-3 flex flex-col px-3 absolute ">
+    <nav className="bg-neutral-950 gap-y-3 w-full z-40 py-3 flex flex-col px-3 absolute left-0 top-0">
       <div className="flex flex-row ml-1 mr-auto h-13">
         <Logo className="mx-0 w-6 h-6 my-auto px-0 py-0"></Logo>
         <h1 className="px-2 my-auto text-xl text-purple-600">/</h1>

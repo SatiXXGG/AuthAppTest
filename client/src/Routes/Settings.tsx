@@ -59,11 +59,11 @@ function App() {
     <>
       <NavBar></NavBar>
 
-      <div className="items-center justify-center h-screen mx-auto flex flex-col">
+      <div className=" items-center justify-center h-screen mx-auto flex flex-col">
         <form
           onSubmit={handleSubmit}
           action=""
-          className="flex flex-col gap-2 bg-black w-[70vw] outline outline-2 outline-neutral-800 rounded-2xl mx-auto px-12 py-3"
+          className="flex flex-col gap-2 bg-black md:w-[70vw] outline outline-2 outline-neutral-800 rounded-2xl mx-auto px-12 py-3"
         >
           <h1 className="text-2xl py-2 text-left">Profile settings</h1>
           <p className="text-xl py-2 text-left text-opacity-50">Username</p>
