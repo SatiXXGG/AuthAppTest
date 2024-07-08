@@ -2,32 +2,53 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { createServer } from "node:http";
-import { createClient } from "@libsql/client";
+import { ACCEPTED_ORIGINS } from './settings/origins.js';
+import rateLimiter from "express-rate-limit"
 
 export default function createApp({ UserController: User, AppOrigin }) {
   const app = express();
+  app.disable("x-powered-by");
   app.use(express.json());
   app.use(cookieParser());
 
+
   const server = createServer(app);
 
-  app.use(
-    cors({
+
+  const cors_full = {
       credentials: true,
-      origin: AppOrigin,
+      origin: (origin, callback) => {
+        if (ACCEPTED_ORIGINS.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    })
-  );
+  }
+
+  const limiter = rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: "Too many requests from this IP, please try again after 15 minutes",
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  })
 
 
   // public routes
+
+  app.post('/app/:id/tickets', cors(), limiter, User.submitTicket)
+
+  app.use(
+    cors(cors_full)
+  );
 
   app.post("/login", User.login);
   app.post("/register", User.register);
   app.post("/logout", User.logout);
   app.post("/verify-email", User.verifyEmail);
   app.post("/verify-url/:id/:code", User.verifyByURL);
-  app.post('/app/:id/tickets', User.submitTicket)
   app.post("/user/token", User.updateToken);
   app.use(User.checkAuth);
 
