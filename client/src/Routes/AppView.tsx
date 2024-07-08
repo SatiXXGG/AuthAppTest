@@ -128,7 +128,7 @@ export default function AppView() {
               <p className="text-sm opacity-50 text-left">{ticket.created_at}</p>
               <button
                 className="p-1 bg-red-600 bg-opacity-75 absolute right-2 bottom-2 rounded-md w-8 h-8"
-                onClick={async () => await ticketDelete(ticket.id)}
+                onClick={async () => await ticketDelete(ticket.unique_id)}
               >
                 <svg
                   className="mx-auto"

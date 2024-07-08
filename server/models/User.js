@@ -384,7 +384,7 @@ export default class UserModel {
   static async getTickets({ id }) {
     try {
       const result = await chatDb.execute({
-        sql: "SELECT id, content, created_at FROM tickets WHERE id = :id",
+        sql: "SELECT unique_id, content, created_at FROM tickets WHERE id = :id",
         args: {
           id,
         },
@@ -450,7 +450,7 @@ export default class UserModel {
   static async deleteTicket({ id, user }) {
     try {
       await chatDb.execute({
-        sql: "DELETE FROM tickets WHERE id = :id",
+        sql: "DELETE FROM tickets WHERE unique_id = :id",
         args: {
           id,
         },
