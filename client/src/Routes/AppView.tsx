@@ -114,7 +114,7 @@ export default function AppView() {
             </div>
           </section>
         </article>
-        <article className="bg-neutral-950 outline outline-neutral-800 p-4 outline-2 rounded-xl w-[23rem] md:w-[40rem] my-4">
+        <article className="bg-neutral-950 outline outline-neutral-800 p-4 outline-2 rounded-xl w-[23rem] md:w-[40rem] my-4 max-h-96">
           <h1 className="text-2xl md:text-4xl pt-2 pb-3 text-left">Tickets</h1>
           {tickets?.length === 0 && (
             <article>
@@ -122,36 +122,38 @@ export default function AppView() {
               <img className="mx-auto" src={sleepGif}></img>
             </article>
           )}
-          {tickets?.map((ticket) => (
-            <article className="bg-neutral-900 rounded-xl p-4 my-2 relative">
-              <p className="text-left">{ticket.content}</p>
-              <p className="text-sm opacity-50 text-left">{ticket.created_at}</p>
-              <button
-                className="p-1 bg-red-600 bg-opacity-75 absolute right-2 bottom-2 rounded-md w-8 h-8"
-                onClick={async () => await ticketDelete(ticket.unique_id)}
-              >
-                <svg
-                  className="mx-auto"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="#fff"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+          <div className="scroll-deco overflow-y-auto max-h-56">
+            {tickets?.map((ticket) => (
+              <article className="bg-neutral-900 rounded-xl p-4 my-2 relative">
+                <p className="text-left">{ticket.content}</p>
+                <p className="text-sm opacity-50 text-left">{ticket.created_at}</p>
+                <button
+                  className="p-1 bg-red-600 bg-opacity-75 absolute right-2 bottom-2 rounded-md w-8 h-8"
+                  onClick={async () => await ticketDelete(ticket.unique_id)}
                 >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M4 7l16 0" />
-                  <path d="M10 11l0 6" />
-                  <path d="M14 11l0 6" />
-                  <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                  <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                </svg>
-              </button>
-            </article>
-          ))}
+                  <svg
+                    className="mx-auto"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="#fff"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M4 7l16 0" />
+                    <path d="M10 11l0 6" />
+                    <path d="M14 11l0 6" />
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                  </svg>
+                </button>
+              </article>
+            ))}
+          </div>
         </article>
       </main>
     </main>
