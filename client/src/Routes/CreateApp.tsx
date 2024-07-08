@@ -32,7 +32,7 @@ export function CreateApp() {
     }).then((res) => res.json());
 
     if (result.success) {
-      window.location.href = `/app/${result.data.id}`;
+      window.location.href = `/apps/${result.data.id}`;
     } else {
       alert(result.message);
     }

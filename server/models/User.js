@@ -307,20 +307,20 @@ export default class UserModel {
       validation.data;
 
     try {
-      const id = crypto.randomUUID()
+      const rid = crypto.randomUUID()
       await chatDb.execute({
         sql: "INSERT INTO apps (id, owner, title, description) VALUES (:id, :owner, :title, :description)",
         args: {
           title: validatedTitle,
           description: validatedDescription,
           owner: id,
-          id
+          id: rid,
         },
       });
 
       return {
+        data: {id: rid},
         success: true,
-        data: {id},
         message: "App created",
       };
     } catch (e) {

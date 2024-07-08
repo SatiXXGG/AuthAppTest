@@ -187,7 +187,7 @@ export default class User {
     const { title, description } = req.body;
     const result = await UserModel.createApp({ id: user, title, description });
 
-    if (result.success) {
+    if (result.success) { 
       return res.status(200).json(result);
     }
 
