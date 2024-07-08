@@ -38,7 +38,7 @@ export default function createApp({ UserController: User, AppOrigin }) {
 
   // public routes
 
-  app.post('/app/:id/tickets', cors(), limiter, User.submitTicket)
+  app.post('/app/:id/tickets', limiter, User.submitTicket)
 
   app.use(
     cors(cors_full)

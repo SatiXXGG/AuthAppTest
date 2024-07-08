@@ -241,6 +241,9 @@ export default class User {
   }
 
   static async submitTicket(req, res) {
+    //places the cors to everyone
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'POST');
     const { id } = req.params;
     const { content } = req.body;
     const result = await UserModel.submitTicket({ id, content });
