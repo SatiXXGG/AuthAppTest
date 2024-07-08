@@ -360,6 +360,14 @@ export default class UserModel {
           owner: useId,
         },
       });
+
+      if (result.rows.length === 0) {
+        return {
+          success: false,
+          message: "404",
+        };
+      }
+
       return {
         success: true,
         data: result.rows[0],
@@ -435,6 +443,27 @@ export default class UserModel {
       return {
         success: false,
         message: "Error deleting app",
+      };
+    }
+  }
+
+  static async deleteTicket({ id, user }) {
+    try {
+      await chatDb.execute({
+        sql: "DELETE FROM tickets WHERE id = :id",
+        args: {
+          id,
+        },
+      });
+      return {
+        success: true,
+        message: "Post deleted",
+      };
+    } catch (e) {
+      console.log(e)
+      return {
+        success: false,
+        message: "Error deleting post",
       };
     }
   }

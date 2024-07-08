@@ -13,7 +13,6 @@ export default function useUser() {
       }).then((res) => res.json());
 
       if (!data.success) {
-        console.log("not success");
         const refreshToken: fetchResult = await fetch(`${API_HOST}/user/token`, {
           method: "POST",
           credentials: "include",

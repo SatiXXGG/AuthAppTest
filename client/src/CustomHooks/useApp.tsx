@@ -17,8 +17,11 @@ export default function useApp() {
         credentials: "include",
       }).then((res) => res.json());
 
+      console.log(data);
       if (data.success) {
         return setApp(data.data);
+      } else if (data.message === "404") {
+        location.href = "/404";
       }
 
       setTimeout(() => {
@@ -26,7 +29,7 @@ export default function useApp() {
       }, 200);
     };
     fetchApp();
-  }, []);
+  }, [id]);
 
   return { app };
 }

@@ -12,6 +12,7 @@ import CreateApp from "./Routes/CreateApp";
 import AppView from "./Routes/AppView";
 import AnswerTicket from "./Routes/AnswerTicket";
 import { Toaster } from "react-hot-toast";
+import NotFound from "./Routes/404";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/app/:id/answer",
     element: <AnswerTicket></AnswerTicket>,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 

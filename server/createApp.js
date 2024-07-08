@@ -19,6 +19,7 @@ export default function createApp({ UserController: User, AppOrigin }) {
     })
   );
 
+
   // public routes
 
   app.post("/login", User.login);
@@ -34,6 +35,7 @@ export default function createApp({ UserController: User, AppOrigin }) {
   app.patch("/user", User.patch);
   app.post("/user/app", User.createApp);
   app.delete('/app', User.deleteApp)
+  app.delete('/app/tickets', User.deleteTicket)
   app.get("/user/app", User.getApps);
   app.get('/app/:id', User.getApp)
   app.get('/app/:id/tickets', User.getTickets)
@@ -44,4 +46,5 @@ export default function createApp({ UserController: User, AppOrigin }) {
   server.listen(process.env.PORT || 3000, () => {
     console.log("listening on http://localhost:" + process.env.PORT || 3000);
   });
+
 }

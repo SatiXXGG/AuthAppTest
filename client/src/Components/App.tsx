@@ -7,7 +7,7 @@ export default function AppSection({ title, description, id, created_at }: appDa
       href={`/apps/${id}`}
     >
       <h1 className="text-xl md:text-2xl font-bold text-left mb-1">{title}</h1>
-      <p className="text-md overflow-ellipsis opacity-75 text-left mb-2  md:text-base">
+      <p className="break-all text-md overflow-ellipsis opacity-75 text-left mb-2  md:text-base">
         {description}
       </p>
       <p className="text-xs opacity-50 text-left">{"Id: " + id}</p>

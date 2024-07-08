@@ -1,4 +1,4 @@
-import UserModel from "../../models/User.js";
+import UserModel from "../models/User.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import {
@@ -6,7 +6,7 @@ import {
   REFRESH_TOKEN_EXPIRATION,
   REFRESH_TOKEN_EXPIRATION_STRING,
   ACCESS_TOKEN_EXPIRATION_STRING,
-} from "../../settings/tokens.js";
+} from "../settings/tokens.js";
 
 dotenv.config("../../.env");
 
@@ -53,14 +53,14 @@ export default class User {
       httpOnly: true,
       maxAge: ACCESS_TOKEN_EXPIRATION,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
     });
 
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       maxAge: REFRESH_TOKEN_EXPIRATION,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
     });
 
     return res.status(200).json({ token, refresh_token, success: true });
@@ -219,13 +219,13 @@ export default class User {
 
   static async deleteApp(req, res) {
     const { user } = req.session;
-    const { id } = req.params;
+    const { id } = req.body;
     const result = await UserModel.deleteApp({ id, user });
 
     if (result.success) {
       return res.send({success: true, message: "app deleted"})
     }
-    res.status(500).send({ success: false, message: result.message });
+    res.status(500).send({success: false, message: "Error deleting app"})
   }
 
   static async getTickets(req, res) {
@@ -250,5 +250,17 @@ export default class User {
     }
 
     res.status(500).send({ error: "Error submitting ticket", message: result.message });
+  }
+
+  static async deleteTicket(req, res) {
+    const { id } = req.body;
+    const {user} = req.session
+    const result = await UserModel.deleteTicket({ id, user });
+
+    if (result.success) {
+      return res.send({success: true, message: "ticket deleted"})
+    }
+
+    res.status(500).send({success: false, message: "Error deleting ticket"})
   }
 }
