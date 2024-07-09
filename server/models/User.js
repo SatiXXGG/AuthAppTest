@@ -3,12 +3,18 @@ import { ValidateData, validatePartial } from "../schemas/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Resend } from "resend";
 import { ValidateAppData } from "../schemas/App.js";
-
+import nodemailer from "nodemailer";
 dotenv.config("../.env");
 
-const resend = new Resend(process.env.RESEND_KEY);
+
+const transport = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
+  },
+});
 
 const chatDb = createClient({
   url: "libsql://chat-satixxgg.turso.io",
@@ -49,10 +55,9 @@ function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-generateTables();
-
 export default class UserModel {
   static async register({ user, password, email, host_url }) {
+    await generateTables();
     const validated = ValidateData({ username: user, password });
 
     if (validated.error) {
@@ -63,8 +68,9 @@ export default class UserModel {
     const hashedPassword = await bcrypt.hash(validated.data.password, 10);
 
     try {
+      const code = generateCode()
       const id = crypto.randomUUID();
-      console.log(validated.data)
+      const generatedUrl = `${host_url}/verify/${id}/${code}`;
 
       await chatDb.execute({
         sql: "INSERT INTO users (username, password, id, description, original_user) VALUES (:username, :password, :id, :description, :original_user)",
@@ -73,19 +79,19 @@ export default class UserModel {
           password: hashedPassword,
           id,
           description: "Hello world!",
-          original_user: "@"+validated.data.username,
+          original_user: "@" + validated.data.username,
         },
       });
 
       await chatDb.execute({
-        sql: "INSERT INTO emails (email, id) VALUES (:email, :id)",
+        sql: "INSERT INTO emails (email, id, verified) VALUES (:email, :id, :verified)",
         args: {
           email: email,
           id,
+          verified: true
         },
       });
 
-      const code = generateCode();
 
       await chatDb.execute({
         sql: "INSERT INTO codes (id, code) VALUES (:id, :code)",
@@ -96,18 +102,9 @@ export default class UserModel {
       });
 
       //sends the verify code..
-      console.log(host_url);
-      const generatedUrl = `${host_url}/verify/${id}/${code}`;
 
-      await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: email,
-        subject: "Verify your email",
-        text: `Your verification code is ${code} \n
-        or enter this link ${generatedUrl} \n`,
-      });
+      
 
-      console.log(result)
 
       return {
         message: "User created",
@@ -192,6 +189,10 @@ export default class UserModel {
           id: userId,
         },
       });
+
+      if (data.rows.length === 0) {
+        return { success: false, message: "User not found" };
+      }
 
       return { success: true, data: data.rows[0] };
     } catch (e) {
@@ -302,7 +303,7 @@ export default class UserModel {
       validation.data;
 
     try {
-      const rid = crypto.randomUUID()
+      const rid = crypto.randomUUID();
       await chatDb.execute({
         sql: "INSERT INTO apps (id, owner, title, description) VALUES (:id, :owner, :title, :description)",
         args: {
@@ -314,7 +315,7 @@ export default class UserModel {
       });
 
       return {
-        data: {id: rid},
+        data: { id: rid },
         success: true,
         message: "App created",
       };
@@ -457,7 +458,7 @@ export default class UserModel {
         message: "Post deleted",
       };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return {
         success: false,
         message: "Error deleting post",

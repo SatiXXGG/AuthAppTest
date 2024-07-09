@@ -57,7 +57,7 @@ function Register() {
     }).then((res) => res.json());
 
     if (registerResult.success) {
-      location.href = "/verify-email";
+      location.href = "/login";
     }
   };
 
