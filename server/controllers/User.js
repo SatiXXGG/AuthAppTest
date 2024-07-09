@@ -49,21 +49,19 @@ export default class User {
       }
     );
 
-    res.cookie("access_token", token, {
-      httpOnly: true,
-      maxAge: ACCESS_TOKEN_EXPIRATION,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-    });
 
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
       maxAge: REFRESH_TOKEN_EXPIRATION,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-    });
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+    }).cookie("access_token", token, {
+      httpOnly: true,
+      maxAge: ACCESS_TOKEN_EXPIRATION,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+    }).status(200).json({ token, refresh_token, success: true });
 
-    return res.status(200).json({ token, refresh_token, success: true });
   }
 
   static async getUserData(req, res) {

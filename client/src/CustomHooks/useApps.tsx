@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { appData, fetchAppResult } from "../Types/UserData";
 import { API_HOST } from "../consts/hosts";
+import { DEFAULT_FETCH_TIME } from "../settings/content_loading";
 
 export default function useApps() {
   const [apps, setApps] = useState<appData[]>();
@@ -13,7 +14,7 @@ export default function useApps() {
       }).then((res) => res.json());
 
       if (!apps.success) {
-        setTimeout(() => fetchApps(), 200);
+        setTimeout(() => fetchApps(), DEFAULT_FETCH_TIME);
         return;
       }
 

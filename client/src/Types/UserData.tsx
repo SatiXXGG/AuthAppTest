@@ -36,6 +36,8 @@ export interface fetchSingleAppResult {
 
 export interface ticket {
   content: string;
+  user?: string;
+  image?: string;
   created_at: string;
   unique_id: string;
 }

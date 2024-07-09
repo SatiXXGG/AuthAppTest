@@ -77,85 +77,100 @@ export default function AppView() {
   };
 
   return (
-    <main className="relative">
+    <>
       {alert()}
       <NavBar></NavBar>
-      <main className="items-center justify-center w-screen h-screen mx-auto flex flex-col">
-        <article className="flex flex-row gap-x-4">
-          <section className="bg-neutral-950 outline outline-neutral-800 p-4 outline-1 rounded-xl w-[23rem] md:w-[40rem]">
-            <h1 className="text-3xl md:text-4xl pt-2 pb-1 text-left">
-              {app?.title ?? "Loading..."}
-            </h1>
-            <p className="opacity-75 text-left text-xl my-3 break-all">
-              {app?.description}
-            </p>
-            <p className="text-left opacity-35">{app?.created_at}</p>
-            <p className="text-left opacity-35 mb-1">{app?.id}</p>
-            <div className="flex flex-row my-2">
-              <Button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    window.location.origin + `/app/${app?.id}/answer`
-                  );
-                  toast.success("Link copied to clipboard!");
-                }}
-                className="px-3 py-1 bg-blue-600 w-32 mr-2"
-                type="button"
-                title="Share"
-              ></Button>
-              <Button
-                className="px-3 py-1 bg-transparent outline-red-600 w-32 mr-2"
-                onClick={() =>
-                  show("Are you sure do you wanna delete: " + app?.title + "?")
-                }
-                type="button"
-                title="Delete"
-              ></Button>
-            </div>
-          </section>
-        </article>
-        <article className="bg-neutral-950 outline outline-neutral-800 p-4 outline-2 rounded-xl w-[23rem] md:w-[40rem] my-4 max-h-96">
-          <h1 className="text-2xl md:text-4xl pt-2 pb-3 text-left">Tickets</h1>
-          {tickets?.length === 0 && (
-            <article>
-              <p className="text-center text-xl mb-2">There is no tickets yet!</p>
-              <img className="mx-auto" src={sleepGif}></img>
-            </article>
-          )}
-          <div className="scroll-deco overflow-y-auto max-h-56">
-            {tickets?.map((ticket) => (
-              <article className="bg-neutral-900 rounded-xl p-4 my-2 relative">
-                <p className="text-left">{ticket.content}</p>
-                <p className="text-sm opacity-50 text-left">{ticket.created_at}</p>
-                <button
-                  className="p-1 bg-red-600 bg-opacity-75 absolute right-2 bottom-2 rounded-md w-8 h-8"
-                  onClick={async () => await ticketDelete(ticket.unique_id)}
-                >
-                  <svg
-                    className="mx-auto"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="#fff"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M4 7l16 0" />
-                    <path d="M10 11l0 6" />
-                    <path d="M14 11l0 6" />
-                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                  </svg>
-                </button>
-              </article>
-            ))}
+      <article className="flex flex-row gap-x-4 justify-center mt-[20vh]">
+        <section className="bg-neutral-950 outline outline-neutral-800 outline-op p-4 outline-1 rounded-xl w-[23rem] md:w-[40rem]">
+          <h1 className="text-3xl md:text-4xl pt-2 pb-1 text-left">
+            {app?.title ?? "Loading..."}
+          </h1>
+          <p className="opacity-75 text-left text-xl my-3 break-all">
+            {app?.description}
+          </p>
+          <p className="text-left opacity-35">{app?.created_at}</p>
+          <p className="text-left opacity-35 mb-1">{app?.id}</p>
+          <div className="flex flex-row my-2">
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  window.location.origin + `/app/${app?.id}/answer`
+                );
+                toast.success("Link copied to clipboard!");
+              }}
+              className="px-3 py-1 bg-blue-600 w-32 mr-2"
+              type="button"
+              title="Share"
+            ></Button>
+            <Button
+              className="px-3 py-1 bg-transparent outline-red-600 w-32 mr-2"
+              onClick={() =>
+                show("Are you sure do you wanna delete: " + app?.title + "?")
+              }
+              type="button"
+              title="Delete"
+            ></Button>
           </div>
-        </article>
-      </main>
-    </main>
+          <hr className="opacity-25 my-2"></hr>
+          <article className="bg-neutral-950 outline outline-neutral-900 p-4 outline-2 rounded-xl my-4">
+            <h1 className="text-2xl md:text-4xl pt-2 pb-3 text-left">Tickets</h1>
+            {tickets?.length === 0 && (
+              <article>
+                <p className="text-center text-xl mb-2">There is no tickets yet!</p>
+                <img className="mx-auto" src={sleepGif}></img>
+              </article>
+            )}
+            <div className="scroll-deco">
+              {tickets?.map((ticket) => (
+                <article className="bg-neutral-900 rounded-xl p-4 mb-2 relative">
+                  <div className="flex flex-row">
+                    {ticket.image ? (
+                      <img
+                        className="w-12 h-12 mr-3 rounded-full outline outline-1 outline-neutral-950"
+                        alt={`${ticket.user} profile image`}
+                        src={ticket.image}
+                      ></img>
+                    ) : (
+                      <></>
+                    )}
+                    <h3 className="text-xl ml-1/2 my-auto">
+                      {ticket.user ?? "Anonymous"}
+                    </h3>
+                    <h3 className="align-baseline ml-auto my-auto opacity-50 text-right">
+                      {ticket.created_at}
+                    </h3>
+                  </div>
+                  <p className="text-left mt-3">{ticket.content}</p>
+                  <button
+                    className="p-1 bg-red-600 bg-opacity-75 absolute right-2 bottom-2 rounded-md w-8 h-8"
+                    onClick={async () => await ticketDelete(ticket.unique_id)}
+                  >
+                    <svg
+                      className="mx-auto"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="#fff"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 7l16 0" />
+                      <path d="M10 11l0 6" />
+                      <path d="M14 11l0 6" />
+                      <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                  </button>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
+      </article>
+    </>
   );
 }

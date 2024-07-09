@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchResult, userData } from "../Types/UserData";
 import { API_HOST } from "../consts/hosts";
+import { DEFAULT_FETCH_TIME } from "../settings/content_loading";
 
 export default function useUser() {
   const [userData, setData] = useState({} as userData);
@@ -22,7 +23,7 @@ export default function useUser() {
           return (location.href = "/login");
         }
 
-        setTimeout(() => fetchUserData(), 200);
+        setTimeout(() => fetchUserData(), DEFAULT_FETCH_TIME);
         return;
       }
 

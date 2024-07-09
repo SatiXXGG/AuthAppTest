@@ -41,7 +41,7 @@ async function generateTables() {
   );
 
   await chatDb.execute(
-    "CREATE TABLE IF NOT EXISTS tickets (id VARCHAR(100) NOT NULL, unique_id VARCHAR(100) PRIMARY KEY UNIQUE NOT NULL, content VARCHAR(20) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP )"
+    "CREATE TABLE IF NOT EXISTS tickets (id VARCHAR(100) NOT NULL, unique_id VARCHAR(100) PRIMARY KEY UNIQUE NOT NULL, image VARCHAR(100), user VARCHAR(100), content VARCHAR(20) NOT NULL, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP )"
   );
 }
 
@@ -64,15 +64,16 @@ export default class UserModel {
 
     try {
       const id = crypto.randomUUID();
+      console.log(validated.data)
 
       await chatDb.execute({
         sql: "INSERT INTO users (username, password, id, description, original_user) VALUES (:username, :password, :id, :description, :original_user)",
         args: {
-          username: user,
+          username: validated.data.username,
           password: hashedPassword,
           id,
           description: "Hello world!",
-          original_user: user,
+          original_user: "@"+validated.data.username,
         },
       });
 
@@ -81,14 +82,6 @@ export default class UserModel {
         args: {
           email: email,
           id,
-        },
-      });
-
-      await chatDb.execute({
-        sql: "INSERT INTO images (id, image) VALUES (:id, :image)",
-        args: {
-          id,
-          image: null,
         },
       });
 
@@ -106,13 +99,15 @@ export default class UserModel {
       console.log(host_url);
       const generatedUrl = `${host_url}/verify/${id}/${code}`;
 
-      resend.emails.send({
+      await resend.emails.send({
         from: "onboarding@resend.dev",
         to: email,
         subject: "Verify your email",
         text: `Your verification code is ${code} \n
         or enter this link ${generatedUrl} \n`,
       });
+
+      console.log(result)
 
       return {
         message: "User created",
